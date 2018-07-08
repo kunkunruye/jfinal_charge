@@ -11,91 +11,41 @@ import static com.charge.protocol.ProtocolConstant.*;
  * Created by zhengkun on 17-12-27.
  */
 public class RequestMsg {
-    private POSFacet posFacet;
+    private GatewayFacet gatewayFacet;
 
     private RequestFacet requestFacet;
 
-    public RequestMsg(String stationName, Long gatewayID, String requestType) {
+    public RequestMsg(Long gatewayID, String requestType) {
 
         Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
         Date utc = new Date();
-        this.posFacet = new POSFacet(stationName, sequenceNum, utc, String.format("%012d",gatewayID));
+        this.gatewayFacet = new GatewayFacet( sequenceNum, utc, String.format("%012d",gatewayID));
         this.requestFacet=new RequestFacet(requestType);
     }
 
-    public RequestMsg(String stationName, Long gatewayID, String requestType, Long pvsn) {
+    public RequestMsg(Long gatewayID, String requestType, Long pvsn) {
 
         Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
         Date utc = new Date();
-        this.posFacet = new POSFacet(stationName, sequenceNum, utc, String.format("%012d",gatewayID));
+        this.gatewayFacet = new GatewayFacet(sequenceNum, utc, String.format("%012d",gatewayID));
         this.requestFacet=new DeletePVRequestFacet(requestType,pvsn);
     }
 
-    public RequestMsg(String stationName, Long gatewayID, String requestType, String cry) {
 
-        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
-        Date utc = new Date();
-        this.posFacet = new POSFacet(stationName, sequenceNum, utc, String.format("%012d",gatewayID));
-        this.requestFacet=new DeleteGWRequestFacet(requestType,cry);
+    public GatewayFacet getGatewayFacet() {
+        return gatewayFacet;
     }
 
-    public RequestMsg(String stationName, Long gatewayID, String requestType,String device,String deviceType,
-                      Integer modBusAddr,Long pvsn,Integer deviceNum,Integer loraF,Integer sf,Integer bf,Integer cr) {
-
-        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
-        Date utc = new Date();
-        this.posFacet = new POSFacet(stationName, sequenceNum, utc, String.format("%012d",gatewayID));
-        this.requestFacet=new AddNodeRequestFacet(requestType,device,deviceType,modBusAddr,pvsn,deviceNum,loraF,sf,bf,cr);
-    }
-
-    public RequestMsg(String stationName, Long gatewayID, String requestType,String device,Long pvsn) {
-
-        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
-        Date utc = new Date();
-        this.posFacet = new POSFacet(stationName, sequenceNum, utc, String.format("%012d",gatewayID));
-        this.requestFacet=new DeleteNodeRequestFacet(requestType,device,pvsn);
-    }
-
-    public RequestMsg(String stationName, Long gatewayID, String requestType,Integer lora_F, Integer sf,Integer bf,Integer cr, Integer pv_In) {
-
-        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
-        Date utc = new Date();
-        this.posFacet = new POSFacet(stationName, sequenceNum, utc, String.format("%012d",gatewayID));
-        this.requestFacet=new ConfigGWRequestFacet(requestType,lora_F,sf,bf,cr,pv_In);
-    }
-    //(Gateway,Collector)
-    public RequestMsg(String stationName, Long gatewayID, String requestType,Integer lora_F, Integer sf,Integer bf,Integer cr, Integer pv_In,
-                      String device,String deviceType,Integer modBusAddr,Integer deviceNum,
-                      Long pvsn,String name,String prov,String city) {
-
-        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
-        Date utc = new Date();
-        this.posFacet = new POSFacet(stationName, sequenceNum, utc, String.format("%012d",gatewayID));
-        this.requestFacet=new ConfigGWRequestFacet(requestType,lora_F,sf,bf,cr,pv_In,device,deviceType,modBusAddr,deviceNum,pvsn,name,prov,city);
-    }
-
-    public POSFacet getPosFacet() {
-        return posFacet;
-    }
-
-    public void setPosFacet(POSFacet posFacet) {
-        this.posFacet = posFacet;
-    }
-
-    public String getStationName() {
-        return posFacet.getPowerstationName();
-    }
-
-    public void setStationName(String stationName) {
-        posFacet.setPowerstationName(stationName);
+    public void setGatewayFacet(GatewayFacet gatewayFacet) {
+        this.gatewayFacet = gatewayFacet;
     }
 
     public Integer getSequenceNum() {
-        return posFacet.getSequenceNum();
+        return gatewayFacet.getSequenceNum();
     }
 
     public void setSequenceNum(Integer sequenceNum) {
-        posFacet.setSequenceNum(sequenceNum);
+        gatewayFacet.setSequenceNum(sequenceNum);
     }
 
     public RequestFacet getRequestFacet() {
@@ -107,7 +57,7 @@ public class RequestMsg {
     }
 
     public String toString(){
-        String posFacetStr = posFacet.toString();
+        String posFacetStr = gatewayFacet.toString();
         String requestFacetStr = requestFacet.toString();
         return posFacetStr + MSG_FACET_SEPARATOR_INSIDE + requestFacetStr;
     }

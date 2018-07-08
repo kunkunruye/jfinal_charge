@@ -47,23 +47,14 @@ public class ProtocolConstant {
     public static final String MSG_REQUEST                                  = "REQUEST";     //REQUEST主题，请求
     public static final String MSG_RESPONSE                                 = "RESPONSE";    //响应
     public static final String MSG_COMMAND                                  = "COMMAND";     //控制
-    public static final String MSG_CONFIRM                                  = "CONFIRM";     //确认网关配置
     public static final String MSG_CONFIG                                   = "CONFIG";      //GW入网请求
 
-    public static final String MSG_DEVICE_INV = "INV";//逆变器
-    public static final String MSG_DEVICE_COMB = "COMB";//汇流箱
-    public static final String MSG_DEVICE_WES = "WES";//气象站
 
     public static final String MSG_DEVICE                                   = "DEVICE";      //设备名称
     public static final String MSG_PVSN                                     = "PVSN";      //采集设备序列号
-    public static final String MSG_PV_SN                                    = "PV_SN";      //配置网关序列号
     public static final String MSG_ALARM                                    = "WARN";        //设备告警标志
     public static final String MSG_STATUS                                   = "STATUS";      //采集设备故障标志
-    public static final String MSG_LNG                                      = "LNG";        //经度
-    public static final String MSG_LAT                                      = "LAT";        //纬度
-    public static final String MSG_LAC                                      = "LAC";        //位置信息编码
-    public static final String MSG_CI                                       = "CI";        //区域信息编码
-    public static final String MSG_STREET                                   = "STREET";    //街道信息
+
 
     //2017.10.19况发志新增
     public static final String MSG_IMAGE_DEVICE                             =   "DEVICE";   //发送图像的设备名
@@ -105,13 +96,6 @@ public class ProtocolConstant {
     public static final String MSG_RESPONCE_RESULT =   "RESULT";  //改变GW后的结果标志
 
 
-    public static final String MSG_CONTROL_CODE_REVERSE                     =   "0";        //0:保留
-    public static final String MSG_CONTROL_CODE_INTERVAL                    =   "1";        //1:设定数据传输间隔
-    public static final String MSG_CONTROL_CODE_TRANSMISSION                =   "2";        //2:加速传输,10s间隔
-    public static final String MSG_CONTROL_CODE_STARTIMAGES                 =   "3";        //3:开始传输图像
-    public static final String MSG_CONTROL_CODE_STOPIMAGES                  =   "4";        //4:停止传输图像
-    public static final String MSG_CONTROL_CODE_SETSUNTIME                  =   "5";        //5:设定日出日落时间
-
     //2017.11.14况发志新增
     public static final String MSG_UPDATE_UPDATE                           =   "UPDATE";   //升级文件的版本号
     public static final String MSG_UPDATE_OFFSET                           =   "OFFSET";   //本次发送的数据在总的升级文件中的偏移量,单位为字节
@@ -121,10 +105,6 @@ public class ProtocolConstant {
     public static final String MSG_UPDATE_STATUS                           =   "STATUS";   //升级状态,可选值为 0、1、3、4、5、10,0 代表该段数据校验有误;1 代表校验成功;3 代表子站网关处于电池供电,升级有可能会中断;4 代表内部 flash 损坏,不可升级;5代表已最新无需升级;10升级成功
 
 
-    //2018年1月3日
-    public static final String MSG_CONTROL_DATA_TICK                        =   "TICK";        //传输间隔
-    public static final String MSG_CONTROL_RISETIME                        =   "RISETIME";        //日出时间
-    public static final String MSG_CONTROL_FALLTIME                        =   "FALLTIME";        //日落时间
 
 
     public static final String MSG_CONG_LORA_F =   "LORA_F";  //信道

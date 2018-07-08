@@ -19,8 +19,6 @@ public class MqttMsgSender {
     private static final String clientid = "MqttMsgSender";
 
     private MqttClient client;
-    private String userName = "admin";
-    private String passWord = "password";
 
     static MqttMsgSender mqttMsgSenderInstance = new MqttMsgSender();
 

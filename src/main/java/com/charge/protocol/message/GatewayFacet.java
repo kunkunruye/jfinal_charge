@@ -8,27 +8,16 @@ import static com.charge.protocol.ProtocolConstant.*;
 /**
  * Created by zhengkun on 17-12-27.
  */
-public class POSFacet {
-    private String powerstationName;
+public class GatewayFacet {
     private Integer sequenceNum;
     private Date utc;
     private String gatewayID;
 
-    public POSFacet(String powerstationName, Integer sequenceNum, Date utc, String gatewayID) {
-        this.powerstationName = powerstationName;
+    public GatewayFacet(Integer sequenceNum, Date utc, String gatewayID) {
         this.sequenceNum = sequenceNum;
         this.utc = utc;
         this.gatewayID = gatewayID;
     }
-
-    public String getPowerstationName() {
-        return powerstationName;
-    }
-
-    public void setPowerstationName(String powerstationName) {
-        this.powerstationName = powerstationName;
-    }
-
     public Integer getSequenceNum() {
         return sequenceNum;
     }
@@ -59,9 +48,9 @@ public class POSFacet {
         SimpleDateFormat currentTimeFormat = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
         currentTimeStr=currentTimeFormat.format(utc);
 
-        return MSG_STATIONNAME + MSG_COMPONENT_SEPARATOR +powerstationName+ MSG_SEGMENT_SEPARATOR +MSG_SERIALNUMBER
+        return MSG_GWID + MSG_COMPONENT_SEPARATOR + gatewayID + MSG_SEGMENT_SEPARATOR +MSG_SERIALNUMBER
                 + MSG_COMPONENT_SEPARATOR +sequenceNum+ MSG_SEGMENT_SEPARATOR + MSG_TIME + MSG_COMPONENT_SEPARATOR +currentTimeStr
-                + MSG_SEGMENT_SEPARATOR + MSG_GWID + MSG_COMPONENT_SEPARATOR + gatewayID;
+                + MSG_SEGMENT_SEPARATOR ;
 
     }
 }
