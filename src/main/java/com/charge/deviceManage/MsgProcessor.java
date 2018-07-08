@@ -3,6 +3,8 @@ package com.charge.deviceManage;
 import com.charge.protocol.TopicAndMsgStruct;
 import com.charge.protocol.topic.GeneralTopic;
 
+import java.util.Vector;
+
 import static com.charge.protocol.ProtocolConstant.*;
 
 public class MsgProcessor {
@@ -51,5 +53,33 @@ public class MsgProcessor {
 
 
     }
+
+    public void permissionOnLine(Long gwId){
+
+
+    }
+
+    public void shutDownAllSockets(Long gwId){
+
+
+    }
+
+    public void shutDownChargeSocket(Long gwId, Vector<Long> socketIds){
+
+
+    }
+
+    public void requestTestPower(Long gwId, Vector<Long> socketIds){
+
+
+    }
+
+    public void startCharge(Long gwId, Vector<Long> socketIds){
+
+
+    }
+
+
+
 
 }

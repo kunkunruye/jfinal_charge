@@ -39,8 +39,6 @@ public class ProtocolConstant {
     public static final String MSG_TIME                                     = "TIME";        //时间
     public static final String MSG_DEVICETYPE                               = "DEVICETYPE";  //机型种类
     public static final String MSG_GWID                                     = "GWID";        //网关ID
-    public static final String MSG_LZOFLAG                                  = "LZOFLAG";     //判断是否压缩0:未压缩,1:已压缩
-    public static final String MSG_LZOLEN                                   = "LZOLEN";        //数据压缩前长度
     public static final String MSG_GW_STATUS                                = "STATUS";        //网关硬件状态
 
 
@@ -50,7 +48,7 @@ public class ProtocolConstant {
     public static final String MSG_CONFIG                                   = "CONFIG";      //GW入网请求
 
 
-    public static final String MSG_DEVICE                                   = "DEVICE";      //设备名称
+    public static final String MSG_DEVICESN = "DEVICESN";      //设备名称
     public static final String MSG_PVSN                                     = "PVSN";      //采集设备序列号
     public static final String MSG_ALARM                                    = "WARN";        //设备告警标志
     public static final String MSG_STATUS                                   = "STATUS";      //采集设备故障标志
@@ -63,37 +61,21 @@ public class ProtocolConstant {
     public static final String MSG_IMAGE_IMAGE                              =   "IMAGE";    //带有图像数据的十六进制码
 
 
-    public static final String MSG_REQUEST_CODE_REVERSE                     =   "0";        //0:保留
-    public static final String MSG_REQUEST_CODE_INVERTERNUMBER              =   "1";        //1:请求传输逆变器编号及种类
-    public static final String MSG_REQUEST_CODE_COMBBOX                     =   "2";        //2:请求传输汇流箱编号及种类
-    public static final String MSG_REQUEST_CODE_GEOGRAPHYINFO               =   "3";        //3:请求传输地理位置信息
-    public static final String MSG_REQUEST_CODE_ONLINECONFIRMATION          =   "4";        //4:请求传输在线确认
-    public static final String MSG_REQUEST_CODE_TRANSFERDATACONFIG          =   "5";        //5:请求传输数据配置,需要在 addInfo:data 项中增加相应设备型号,
-    public static final String MSG_REQUEST_CODE_TRANSFERALARMCONFIG         =   "6";        //6:请求传输报警配置,需要在 addInfo:data 项中增加相应设备型号,
-    public static final String MSG_REQUEST_CODE_NODEINFO                    =   "7";        //7:请求传输相应的node信息
-    public static final String MSG_REQUEST_CODE_ADDNODE                     =   "8";        //8:请求加入某个节点
-    public static final String MSG_REQUEST_CODE_DELETENODE                  =   "9";        //9:请求删除某个节点
-    public static final String MSG_REQUEST_CODE_CHANGE_GW_INFO              =   "10";       //10:请求改变GW配置信息
-    public static final String MSG_REQUEST_CODE_DELETEPV                    =   "11";       //11:请求删除采集器
-    public static final String MSG_REQUEST_CODE_DELETEGW                    =   "12";       //12:请求删除网关
+    public static final String MSG_REQUEST_CODE_REVERSE =   "0";        //0:保留
+    public static final String MSG_REQUEST_CODE_PERMISSIONONLINE =   "1";        //1:请求允许上线
+    public static final String MSG_REQUEST_CODE_SHUTDOWNALLSOCKETS =   "2";        //2:请求切断所有插座
+    public static final String MSG_REQUEST_CODE_SHUTDOWNSOCKET =   "3";        //3:请求切断充电插座电源
+    public static final String MSG_REQUEST_CODE_TESTSOCKETPOWER =   "4";        //4:请求测试插座充电功率
+    public static final String MSG_REQUEST_CODE_SOCKETSTARTCHARGE =   "5";        //5:插座开始充电
+
 
     public static final String MSG_RESPONCE_CODE_REVERSE                    =   "0";        //0:保留
-    public static final String MSG_RESPONCE_CODE_INVERTERNUMBER             =   "1";        //1:响应传输逆变器编号及种类
-    public static final String MSG_RESPONCE_CODE_COMBBOX                    =   "2";        //2:响应传输汇流箱编号及种类
-    public static final String MSG_RESPONCE_CODE_GEOGRAPHYINFO              =   "3";        //3:响应传输地理位置信息
-    public static final String MSG_RESPONCE_CODE_ONLINECONFIRMATION         =   "4";        //4:响应传输在线确认
-    public static final String MSG_RESPONCE_CODE_TRANSFERDATACONFIG         =   "5";        //5:响应传输数据配置
-    public static final String MSG_RESPONCE_CODE_TRANSFERALARMCONFIG        =   "6";        //6:响应传输报警配置
-    public static final String MSG_RESPONCE_CODE_NODEINFO                   =   "7";        //7:响应传输相应的node信息
-    public static final String MSG_RESPONCE_CODE_ADDNODE                    =   "8";        //8:响应加入某个节点
-    public static final String MSG_RESPONCE_CODE_DELETENODE                 =   "9";        //9:响应删除某个节点
-    public static final String MSG_RESPONCE_CODE_CHANGE_GW_INFO             =   "10";       //10:响应改变GW配置信息
-    public static final String MSG_RESPONCE_CODE_DELETEPV                   =   "11";       //11:响应删除采集器
-    public static final String MSG_RESPONCE_CODE_DELETEGW                   =   "12";       //12:响应删除网关
+    public static final String MSG_RESPONCE_CODE_PERMISSIONONLINE             =   "1";        //1:响应上线
+    public static final String MSG_RESPONCE_CODE_SHUTDOWNALLSOCKETS           =   "2";        //2:响应切断所有插座
+    public static final String MSG_RESPONCE_CODE_SHUTDOWNSOCKET              =   "3";        //3:响应切断充电插座
+    public static final String MSG_RESPONCE_CODE_TESTSOCKETPOWER         =   "4";        //4:响应测试充电功率
+    public static final String MSG_RESPONCE_CODE_SOCKETSTARTCHARGE         =   "5";        //5:响应插座开始充电
 
-    public static final String MSG_RESPONCE_DELETE =   "DELETE";  //删除节点成功与否标志
-    public static final String MSG_RESPONCE_ADD =   "ADD";  //添加节点成功与否标志
-    public static final String MSG_RESPONCE_RESULT =   "RESULT";  //改变GW后的结果标志
 
 
     //2017.11.14况发志新增

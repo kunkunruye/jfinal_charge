@@ -4,6 +4,7 @@ package com.charge.protocol.message;
 import com.charge.utils.SEQGeneration;
 
 import java.util.Date;
+import java.util.Vector;
 
 import static com.charge.protocol.ProtocolConstant.*;
 
@@ -13,53 +14,33 @@ import static com.charge.protocol.ProtocolConstant.*;
 public class RequestMsg {
     private GatewayFacet gatewayFacet;
 
-    private RequestFacet requestFacet;
+    private Vector<RequestFacet> requestFacetVec = new Vector<>();
 
-    public RequestMsg(Long gatewayID, String requestType) {
+    public RequestMsg() {
 
-        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
-        Date utc = new Date();
-        this.gatewayFacet = new GatewayFacet( sequenceNum, utc, String.format("%012d",gatewayID));
-        this.requestFacet=new RequestFacet(requestType);
-    }
-
-    public RequestMsg(Long gatewayID, String requestType, Long pvsn) {
-
-        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
-        Date utc = new Date();
-        this.gatewayFacet = new GatewayFacet(sequenceNum, utc, String.format("%012d",gatewayID));
-        this.requestFacet=new DeletePVRequestFacet(requestType,pvsn);
-    }
-
-
-    public GatewayFacet getGatewayFacet() {
-        return gatewayFacet;
     }
 
     public void setGatewayFacet(GatewayFacet gatewayFacet) {
         this.gatewayFacet = gatewayFacet;
     }
 
-    public Integer getSequenceNum() {
-        return gatewayFacet.getSequenceNum();
-    }
 
-    public void setSequenceNum(Integer sequenceNum) {
-        gatewayFacet.setSequenceNum(sequenceNum);
-    }
-
-    public RequestFacet getRequestFacet() {
-        return requestFacet;
-    }
-
-    public void setRequestFacet(RequestFacet requestFacet) {
-        this.requestFacet = requestFacet;
+    public void addRequestFacet(RequestFacet requestFacet){
+        requestFacetVec.add(requestFacet);
     }
 
     public String toString(){
         String posFacetStr = gatewayFacet.toString();
-        String requestFacetStr = requestFacet.toString();
-        return posFacetStr + MSG_FACET_SEPARATOR_INSIDE + requestFacetStr;
+        StringBuilder msg = new StringBuilder();
+
+        msg.append(posFacetStr).append(MSG_FACET_SEPARATOR_INSIDE);
+
+        for (RequestFacet requestFacet : requestFacetVec){
+            msg.append(requestFacet.toString()).append(MSG_FACET_SEPARATOR_INSIDE);
+        }
+        msg.deleteCharAt(msg.length()-2);
+
+        return msg.toString();
     }
 
 }

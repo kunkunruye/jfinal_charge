@@ -5,7 +5,7 @@ import static com.charge.protocol.ProtocolConstant.*;
 /**
  * Created by zhengkun on 17-12-27.
  */
-public class RequestFacet {
+public abstract class RequestFacet {
 
     protected String requestType;
 
