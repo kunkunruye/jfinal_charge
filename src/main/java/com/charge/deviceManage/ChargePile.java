@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.charge.protocol.ProtocolConstant.*;
 
@@ -32,6 +33,11 @@ public class ChargePile implements GateWay {
     private Map<Long, Device> chargeSocketIds = new HashMap<>();//该充电桩下的所有插座
 
     private static Logger _log = LoggerFactory.getLogger(ChargePile.class);
+    private Map<Integer, String> requestSNAndCallBackQueueNameMap = new ConcurrentHashMap();
+
+    public ChargePile(Long chargePileId){
+        this.chargePileId = chargePileId;
+    }
 
     @Override
     public void setID(Long id) {
@@ -149,7 +155,8 @@ public class ChargePile implements GateWay {
         try {
             //以后改成response
             GeneralTopic stationInfoSend = new GeneralTopic(MQTT_TOPIC_INDUSTRY_CHARGE, getGatewayIdStr(), topicType);//发送主题的前部分和接受到的主题相同
-            MqttMsgSender.getInstance().Send(stationInfoSend.getTopic(), msg.replaceAll(MSG_FACET_SEPARATOR_INSIDE, MSG_FACET_SEPARATOR),0);
+            String msgReplace = msg.replaceAll(MSG_FACET_SEPARATOR_INSIDE, MSG_FACET_SEPARATOR);
+            MqttMsgSender.getInstance().Send(stationInfoSend.getTopic(), msgReplace,0);
         } catch (MqttException e) {
             _log.error("向mqtt推送消息错误!",e.getMessage());
         }
@@ -157,22 +164,24 @@ public class ChargePile implements GateWay {
 
 
     //请求允许上线
-    public void permissionOnLine(){
+    public void permissionOnLine(String callBackQueueName){
 
         RequestMsg requestMsg = new RequestMsg();
 
         Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
         Date utc = new Date();
-        requestMsg.setGatewayFacet(new GatewayFacet(sequenceNum, utc, getGatewayIdStr()));
-        requestMsg.addRequestFacet(new RequestChargePlieFacet(MSG_REQUEST_CODE_PERMISSIONONLINE));
+        GatewayFacet gatewayFacet = new GatewayFacet(sequenceNum, utc, getGatewayIdStr());
+        requestMsg.setGatewayFacet(gatewayFacet);
+        RequestChargePlieFacet requestFacet = new RequestChargePlieFacet(MSG_REQUEST_CODE_PERMISSIONONLINE);
+        requestMsg.addRequestFacet(requestFacet);
 
         String requestMsgStr = requestMsg.toString();
 
         System.out.println("permissionOnLine: \n\r" + requestMsgStr);
 
-        //sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
+        sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
         //将sn存储起来，等待接受response消息使用
-        //requestSNAndCallBackQueueNameMap.put(requestMsg.getSequenceNum(), callBackQueueName);
+        requestSNAndCallBackQueueNameMap.put(gatewayFacet.getSequenceNum(), callBackQueueName);
 
 
     }
@@ -182,7 +191,7 @@ public class ChargePile implements GateWay {
     }
 
     //请求关闭所有插座
-    public void shutDownAllSockets(){
+    public void shutDownAllSockets(String callBackQueueName){
         RequestMsg requestMsg = new RequestMsg();
 
         Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
@@ -194,19 +203,20 @@ public class ChargePile implements GateWay {
 
         System.out.println("shutDownAllSockets: \n\r" + requestMsgStr);
 
-        //sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
+        sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
         //将sn存储起来，等待接受response消息使用
-        //requestSNAndCallBackQueueNameMap.put(requestMsg.getSequenceNum(), callBackQueueName);
+        requestSNAndCallBackQueueNameMap.put(sequenceNum, callBackQueueName);
 
     }
 
     //请求关闭插座
-    public void shutDownChargeSocket(Vector<Long> socketIds){
+    public void shutDownChargeSocket(Vector<Long> socketIds, String callBackQueueName){
         RequestMsg requestMsg = new RequestMsg();
 
         Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
         Date utc = new Date();
-        requestMsg.setGatewayFacet(new GatewayFacet(sequenceNum, utc, getGatewayIdStr()));
+        GatewayFacet gatewayFacet = new GatewayFacet(sequenceNum, utc, getGatewayIdStr());
+        requestMsg.setGatewayFacet(gatewayFacet);
         for (Long socketId : socketIds){
             requestMsg.addRequestFacet(new RequestSocketFacet(MSG_REQUEST_CODE_SHUTDOWNSOCKET, socketId.toString()));
         }
@@ -215,14 +225,14 @@ public class ChargePile implements GateWay {
 
         System.out.println("shutDownChargeSocket: \n\r" + requestMsgStr);
 
-        //sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
+        sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
         //将sn存储起来，等待接受response消息使用
-        //requestSNAndCallBackQueueNameMap.put(requestMsg.getSequenceNum(), callBackQueueName);
+        requestSNAndCallBackQueueNameMap.put(gatewayFacet.getSequenceNum(), callBackQueueName);
 
     }
 
     //请求测试充电功率
-    public void requestTestPower(Vector<Long> socketIds){
+    public void requestTestPower(Vector<Long> socketIds, String callBackQueueName){
         RequestMsg requestMsg = new RequestMsg();
 
         Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
@@ -236,14 +246,14 @@ public class ChargePile implements GateWay {
 
         System.out.println("requestTestPower: \n\r" + requestMsgStr);
 
-        //sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
+        sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
         //将sn存储起来，等待接受response消息使用
-        //requestSNAndCallBackQueueNameMap.put(requestMsg.getSequenceNum(), callBackQueueName);
+        requestSNAndCallBackQueueNameMap.put(sequenceNum, callBackQueueName);
 
     }
 
     //请求插座开始充电
-    public void startCharge(Vector<Long> socketIds){
+    public void startCharge(Vector<Long> socketIds, String callBackQueueName){
         RequestMsg requestMsg = new RequestMsg();
 
         Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
@@ -257,9 +267,9 @@ public class ChargePile implements GateWay {
 
         System.out.println("startCharge: \n\r" + requestMsgStr);
 
-        //sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
+        sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
         //将sn存储起来，等待接受response消息使用
-        //requestSNAndCallBackQueueNameMap.put(requestMsg.getSequenceNum(), callBackQueueName);
+        requestSNAndCallBackQueueNameMap.put(sequenceNum, callBackQueueName);
 
     }
 
@@ -267,23 +277,24 @@ public class ChargePile implements GateWay {
     public static void main(String[] args){
 
 
-        ChargePile chargePile = new ChargePile();
-        chargePile.setID(10001L);
+        ChargePile chargePile = new ChargePile(1000L);
 
-        chargePile.permissionOnLine();
+        String testQueue = "testqueue";
 
-        chargePile.shutDownAllSockets();
+        chargePile.permissionOnLine(testQueue);
+
+        chargePile.shutDownAllSockets(testQueue);
 
         Vector<Long> sockets = new Vector<>();
         sockets.add(1L);
         sockets.add(2L);
         sockets.add(4L);
 
-        chargePile.shutDownChargeSocket(sockets);
+        chargePile.shutDownChargeSocket(sockets, testQueue);
 
-        chargePile.requestTestPower(sockets);
+        chargePile.requestTestPower(sockets, testQueue);
 
-        chargePile.startCharge(sockets);
+        chargePile.startCharge(sockets, testQueue);
 
     }
 

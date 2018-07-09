@@ -28,26 +28,37 @@ public class MsgProcessor {
         Long gwId = Long.parseLong(generalTopic.getGwId());
         String messageType = generalTopic.getMessageType();
 
-        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
+        if (TOPIC_NOTIFY.equals(messageType)){
 
-        switch (messageType) {
-            case TOPIC_DATA:
-                chargePile.dataMsgHandle(message);
-                break;
-            case TOPIC_IMAGE:
-                chargePile.imageMsgHandle(message);
-                break;
-            case TOPIC_REQUEST:
-                chargePile.requestMsgHandle(message);
-                break;
-            case TOPIC_RESPONSE:
-                chargePile.responseMsgHandle(message);
-                break;
-            case TOPIC_UPDATE:
-                chargePile.updateMsgHandle(message);
-                break;
-            default:
-                break;
+            UnregisteredChargePileManager instance = UnregisteredChargePileManager.getInstance();
+            if (!instance.hasUnregisteredChargePile(gwId)){
+                instance.addUnregisteredChargePile(gwId);
+            }
+
+        }else {
+
+            ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
+
+            switch (messageType) {
+                case TOPIC_DATA:
+                    chargePile.dataMsgHandle(message);
+                    break;
+                case TOPIC_IMAGE:
+                    chargePile.imageMsgHandle(message);
+                    break;
+                case TOPIC_REQUEST:
+                    chargePile.requestMsgHandle(message);
+                    break;
+                case TOPIC_RESPONSE:
+                    chargePile.responseMsgHandle(message);
+                    break;
+                case TOPIC_UPDATE:
+                    chargePile.updateMsgHandle(message);
+                    break;
+                default:
+                    break;
+            }
+
         }
 
 
@@ -55,41 +66,41 @@ public class MsgProcessor {
     }
 
     //请求允许上线
-    public void permissionOnLine(Long gwId){
+    public void permissionOnLine(Long gwId, String callBackQueueName){
         ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
 
-        chargePile.permissionOnLine();
+        chargePile.permissionOnLine(callBackQueueName);
 
     }
 
     //请求关闭所有插座
-    public void shutDownAllSockets(Long gwId){
+    public void shutDownAllSockets(Long gwId, String callBackQueueName){
         ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
 
-        chargePile.shutDownAllSockets();
+        chargePile.shutDownAllSockets(callBackQueueName);
 
     }
 
     //请求关闭插座
-    public void shutDownChargeSocket(Long gwId, Vector<Long> socketIds){
+    public void shutDownChargeSocket(Long gwId, Vector<Long> socketIds, String callBackQueueName){
         ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
 
-        chargePile.shutDownChargeSocket(socketIds);
+        chargePile.shutDownChargeSocket(socketIds, callBackQueueName);
 
     }
 
     //请求测试充电功率
-    public void requestTestPower(Long gwId, Vector<Long> socketIds){
+    public void requestTestPower(Long gwId, Vector<Long> socketIds, String callBackQueueName){
         ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
 
-        chargePile.requestTestPower(socketIds);
+        chargePile.requestTestPower(socketIds, callBackQueueName);
     }
 
     //请求插座开始充电
-    public void startCharge(Long gwId, Vector<Long> socketIds){
+    public void startCharge(Long gwId, Vector<Long> socketIds, String callBackQueueName){
         ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
 
-        chargePile.startCharge(socketIds);
+        chargePile.startCharge(socketIds, callBackQueueName);
 
     }
 
