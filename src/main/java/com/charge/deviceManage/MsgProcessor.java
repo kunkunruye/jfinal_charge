@@ -54,28 +54,42 @@ public class MsgProcessor {
 
     }
 
+    //请求允许上线
     public void permissionOnLine(Long gwId){
+        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
 
+        chargePile.permissionOnLine();
 
     }
 
+    //请求关闭所有插座
     public void shutDownAllSockets(Long gwId){
+        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
 
+        chargePile.shutDownAllSockets();
 
     }
 
+    //请求关闭插座
     public void shutDownChargeSocket(Long gwId, Vector<Long> socketIds){
+        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
 
+        chargePile.shutDownChargeSocket(socketIds);
 
     }
 
+    //请求测试充电功率
     public void requestTestPower(Long gwId, Vector<Long> socketIds){
+        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
 
-
+        chargePile.requestTestPower(socketIds);
     }
 
+    //请求插座开始充电
     public void startCharge(Long gwId, Vector<Long> socketIds){
+        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
 
+        chargePile.startCharge(socketIds);
 
     }
 

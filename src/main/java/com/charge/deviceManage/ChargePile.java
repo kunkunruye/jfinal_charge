@@ -6,8 +6,16 @@ import com.charge.deviceInterface.Collector;
 import com.charge.deviceInterface.Device;
 import com.charge.deviceInterface.GateWay;
 import com.charge.listener.ActiveMQMsgServer;
+import com.charge.protocol.MqttMsgSender;
 import com.charge.protocol.MsgConvertUtil;
+import com.charge.protocol.message.GatewayFacet;
+import com.charge.protocol.message.RequestChargePlieFacet;
+import com.charge.protocol.message.RequestMsg;
+import com.charge.protocol.message.RequestSocketFacet;
+import com.charge.protocol.topic.GeneralTopic;
 import com.charge.protocol.update.UpdateMsgHandle;
+import com.charge.utils.SEQGeneration;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,6 +142,149 @@ public class ChargePile implements GateWay {
         String location = "";
         ActiveMQMsgServer server = ActiveMQMsgServer.getInstance();
         UpdateMsgHandle.handle(server,location,messageJson);
+    }
+
+    //通过mqtt向硬件推送数据
+    private void sendMqttMsg(String topicType, String msg) {
+        try {
+            //以后改成response
+            GeneralTopic stationInfoSend = new GeneralTopic(MQTT_TOPIC_INDUSTRY_CHARGE, getGatewayIdStr(), topicType);//发送主题的前部分和接受到的主题相同
+            MqttMsgSender.getInstance().Send(stationInfoSend.getTopic(), msg.replaceAll(MSG_FACET_SEPARATOR_INSIDE, MSG_FACET_SEPARATOR),0);
+        } catch (MqttException e) {
+            _log.error("向mqtt推送消息错误!",e.getMessage());
+        }
+    }
+
+
+    //请求允许上线
+    public void permissionOnLine(){
+
+        RequestMsg requestMsg = new RequestMsg();
+
+        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
+        Date utc = new Date();
+        requestMsg.setGatewayFacet(new GatewayFacet(sequenceNum, utc, getGatewayIdStr()));
+        requestMsg.addRequestFacet(new RequestChargePlieFacet(MSG_REQUEST_CODE_PERMISSIONONLINE));
+
+        String requestMsgStr = requestMsg.toString();
+
+        System.out.println("permissionOnLine: \n\r" + requestMsgStr);
+
+        //sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
+        //将sn存储起来，等待接受response消息使用
+        //requestSNAndCallBackQueueNameMap.put(requestMsg.getSequenceNum(), callBackQueueName);
+
+
+    }
+
+    private String getGatewayIdStr() {
+        return String.format("%012d",chargePileId);
+    }
+
+    //请求关闭所有插座
+    public void shutDownAllSockets(){
+        RequestMsg requestMsg = new RequestMsg();
+
+        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
+        Date utc = new Date();
+        requestMsg.setGatewayFacet(new GatewayFacet(sequenceNum, utc, getGatewayIdStr()));
+        requestMsg.addRequestFacet(new RequestChargePlieFacet(MSG_REQUEST_CODE_SHUTDOWNALLSOCKETS));
+
+        String requestMsgStr = requestMsg.toString();
+
+        System.out.println("shutDownAllSockets: \n\r" + requestMsgStr);
+
+        //sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
+        //将sn存储起来，等待接受response消息使用
+        //requestSNAndCallBackQueueNameMap.put(requestMsg.getSequenceNum(), callBackQueueName);
+
+    }
+
+    //请求关闭插座
+    public void shutDownChargeSocket(Vector<Long> socketIds){
+        RequestMsg requestMsg = new RequestMsg();
+
+        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
+        Date utc = new Date();
+        requestMsg.setGatewayFacet(new GatewayFacet(sequenceNum, utc, getGatewayIdStr()));
+        for (Long socketId : socketIds){
+            requestMsg.addRequestFacet(new RequestSocketFacet(MSG_REQUEST_CODE_SHUTDOWNSOCKET, socketId.toString()));
+        }
+
+        String requestMsgStr = requestMsg.toString();
+
+        System.out.println("shutDownChargeSocket: \n\r" + requestMsgStr);
+
+        //sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
+        //将sn存储起来，等待接受response消息使用
+        //requestSNAndCallBackQueueNameMap.put(requestMsg.getSequenceNum(), callBackQueueName);
+
+    }
+
+    //请求测试充电功率
+    public void requestTestPower(Vector<Long> socketIds){
+        RequestMsg requestMsg = new RequestMsg();
+
+        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
+        Date utc = new Date();
+        requestMsg.setGatewayFacet(new GatewayFacet(sequenceNum, utc, getGatewayIdStr()));
+        for (Long socketId : socketIds){
+            requestMsg.addRequestFacet(new RequestSocketFacet(MSG_REQUEST_CODE_TESTSOCKETPOWER, socketId.toString()));
+        }
+
+        String requestMsgStr = requestMsg.toString();
+
+        System.out.println("requestTestPower: \n\r" + requestMsgStr);
+
+        //sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
+        //将sn存储起来，等待接受response消息使用
+        //requestSNAndCallBackQueueNameMap.put(requestMsg.getSequenceNum(), callBackQueueName);
+
+    }
+
+    //请求插座开始充电
+    public void startCharge(Vector<Long> socketIds){
+        RequestMsg requestMsg = new RequestMsg();
+
+        Integer sequenceNum = SEQGeneration.getInstance().getSEQ();
+        Date utc = new Date();
+        requestMsg.setGatewayFacet(new GatewayFacet(sequenceNum, utc, getGatewayIdStr()));
+        for (Long socketId : socketIds){
+            requestMsg.addRequestFacet(new RequestSocketFacet(MSG_REQUEST_CODE_SOCKETSTARTCHARGE, socketId.toString()));
+        }
+
+        String requestMsgStr = requestMsg.toString();
+
+        System.out.println("startCharge: \n\r" + requestMsgStr);
+
+        //sendMqttMsg(TOPIC_REQUEST, requestMsgStr);
+        //将sn存储起来，等待接受response消息使用
+        //requestSNAndCallBackQueueNameMap.put(requestMsg.getSequenceNum(), callBackQueueName);
+
+    }
+
+
+    public static void main(String[] args){
+
+
+        ChargePile chargePile = new ChargePile();
+        chargePile.setID(10001L);
+
+        chargePile.permissionOnLine();
+
+        chargePile.shutDownAllSockets();
+
+        Vector<Long> sockets = new Vector<>();
+        sockets.add(1L);
+        sockets.add(2L);
+        sockets.add(4L);
+
+        chargePile.shutDownChargeSocket(sockets);
+
+        chargePile.requestTestPower(sockets);
+
+        chargePile.startCharge(sockets);
+
     }
 
 

@@ -14,6 +14,10 @@ public class ProtocolConstant {
     public static final String MQTT_TOPIC_TO_POINT = "P";
     public static final String MQTT_TOPIC_TO_CENTER = "C";
 
+    public static final String MQTT_TOPIC_INDUSTRY_CHARGE = "CHARGE";
+
+    public static final String MQTT_TOPIC_CUR_VERSION = "1";
+
     public static final String MQTT_TOPIC_GW_INIT = "GW_INIT";
 
     public static final String TOPIC_DATA = "data";

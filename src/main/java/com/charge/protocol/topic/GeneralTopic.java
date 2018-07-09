@@ -2,6 +2,7 @@ package com.charge.protocol.topic;
 
 import java.util.Vector;
 
+import static com.charge.protocol.ProtocolConstant.MQTT_TOPIC_CUR_VERSION;
 import static com.charge.protocol.ProtocolConstant.MQTT_TOPIC_TO_POINT;
 
 public class GeneralTopic implements Topic{
@@ -19,6 +20,13 @@ public class GeneralTopic implements Topic{
     public GeneralTopic(String industry, String version, String gwId, String messageType) {
         this.industry = industry;
         this.version = version;
+        this.gwId = gwId;
+        this.messageType = messageType;
+    }
+
+    public GeneralTopic(String industry, String gwId, String messageType) {
+        this.industry = industry;
+        this.version = MQTT_TOPIC_CUR_VERSION;
         this.gwId = gwId;
         this.messageType = messageType;
     }
