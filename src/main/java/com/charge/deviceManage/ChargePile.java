@@ -14,6 +14,7 @@ import com.charge.protocol.message.RequestMsg;
 import com.charge.protocol.message.RequestSocketFacet;
 import com.charge.protocol.topic.GeneralTopic;
 import com.charge.protocol.update.UpdateMsgHandle;
+import com.charge.utils.DateUtil;
 import com.charge.utils.SEQGeneration;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class ChargePile implements GateWay {
 
     private Map<Integer, Alarm> alarmMap = new HashMap<>();//Tag， alarm   保存的状态数据
 
-    private Map<Long, Device> chargeSocketIds = new HashMap<>();//该充电桩下的所有插座
+    private Map<Long, Device> chargeSocketMap = new HashMap<>();//该充电桩下的所有插座
 
     private static Logger _log = LoggerFactory.getLogger(ChargePile.class);
     private Map<Integer, String> requestSNAndCallBackQueueNameMap = new ConcurrentHashMap();
@@ -110,19 +111,44 @@ public class ChargePile implements GateWay {
 
         long startTime=System.currentTimeMillis();//记录开始时间
 
-        JSONArray messageJson = MsgConvertUtil.msg2Json(messageIn);
+        JSONArray messageJsonArr = MsgConvertUtil.msg2Json(messageIn);
 
         long endTime=System.currentTimeMillis();//记录结束时间
         float excTime=(float)(endTime-startTime)/1000;
         _log.info("PVStation dataMsgHandle convertDataValue2StandardUnit 执行时间："+excTime+"s");
 
-        updateData(messageJson);
+        updateData(messageJsonArr);
 
     }
 
     private void updateData(JSONArray msgJArray){
         //todo 具体功能待实现
+
+        JSONObject gwFacetObj = msgJArray.getJSONObject(0);
+
+        Date dataTime= DateUtil.yyyyMMddHHmmssStrToDate(gwFacetObj.getString(MSG_TIME));
+
+        for (int i=1; i<msgJArray.size(); i++){
+            JSONObject chargeSocketObj = msgJArray.getJSONObject(i);
+
+            Long socketSn = Long.parseLong(chargeSocketObj.getString(MSG_DEVICESN));
+
+            if (!chargeSocketMap.containsKey(socketSn)){
+                ChargeSocket chargeSocket = new ChargeSocket(chargePileId, socketSn);
+                chargeSocketMap.put(socketSn, chargeSocket);
+            }
+
+            Device chargeSocket = chargeSocketMap.get(socketSn);
+
+            chargeSocket.updateData(dataTime, chargeSocketObj);
+
+        }
+
+
+
     }
+
+
 
     public void imageMsgHandle(String message){
 

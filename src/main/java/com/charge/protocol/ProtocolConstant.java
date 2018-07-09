@@ -57,6 +57,15 @@ public class ProtocolConstant {
     public static final String MSG_ALARM                                    = "WARN";        //设备告警标志
     public static final String MSG_STATUS                                   = "STATUS";      //采集设备故障标志
 
+    public static final String MSG_MAINTYPE_CHARGESOCKET = "1";//主类型 1， 代表充电插座
+
+    public static final String MSG_INUSE = "USE";//充电桩占用情况
+    public static final String MSG_STARTPOWER = "SP";//初始充电功率
+    public static final String MSG_CHARGEINTENSITY = "CI";//充电电流
+    public static final String MSG_CHARGETIME = "CT";//充电时长
+    public static final String MSG_CHARGESTATE = "CS";//充电状态
+
+
 
     //2017.10.19况发志新增
     public static final String MSG_IMAGE_DEVICE                             =   "DEVICE";   //发送图像的设备名
