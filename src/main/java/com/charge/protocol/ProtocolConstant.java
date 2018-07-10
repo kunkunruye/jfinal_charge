@@ -1,8 +1,5 @@
 package com.charge.protocol;
 
-/**
- * Created by wukai on 17-7-12.
- */
 public class ProtocolConstant {
     public static final String MQTT_BROKER_IP = "tcp://139.199.78.128:1883";
 

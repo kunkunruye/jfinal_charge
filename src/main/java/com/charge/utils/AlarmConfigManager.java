@@ -3,9 +3,6 @@ package com.charge.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by root on 17-11-22.
- */
 public class AlarmConfigManager {
 
     private static AlarmConfigManager alarmConfigManagerInstance = new AlarmConfigManager();

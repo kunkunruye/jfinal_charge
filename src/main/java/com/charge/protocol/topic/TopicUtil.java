@@ -1,15 +1,9 @@
 package com.charge.protocol.topic;
 
-
-
-
 import java.util.Vector;
 
 import static com.charge.protocol.ProtocolConstant.MQTT_TOPIC_SEPARATOR;
 
-/**
- * Created by wukai on 17-7-5.
- */
 public  class TopicUtil {
 
 

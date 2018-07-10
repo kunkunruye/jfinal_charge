@@ -39,22 +39,9 @@ public class ChargeSocket implements Device {
         this.chargeSocketId = chargeSocketId;
     }
 
-
-    @Override
-    public void setCollectorId(Long collectorId) {
-        return;
-
-    }
-
-    @Override
-    public Long getCollectorId() {
-        return chargePileId;
-    }
-
     @Override
     public void setGWId(Long gwId) {
         chargePileId = gwId;
-
     }
 
     @Override
@@ -64,7 +51,6 @@ public class ChargeSocket implements Device {
 
     @Override
     public void setID(Long id) {
-
         chargeSocketId = id;
     }
 
@@ -137,8 +123,6 @@ public class ChargeSocket implements Device {
         }
 
         updateAllAlarm(alarmTagList, updateTime);
-
-
         return true;
     }
 

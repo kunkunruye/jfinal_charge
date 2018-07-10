@@ -1,8 +1,5 @@
 package com.charge.protocol;
 
-
-
-
 import com.charge.utils.CommunicateBySocket;
 import com.charge.utils.MqttReconnectUtil;
 import com.charge.jms.ActiveMQConstant;

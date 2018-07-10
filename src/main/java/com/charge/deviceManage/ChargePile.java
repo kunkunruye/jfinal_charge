@@ -2,7 +2,6 @@ package com.charge.deviceManage;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.charge.deviceInterface.Collector;
 import com.charge.deviceInterface.Device;
 import com.charge.deviceInterface.GateWay;
 import com.charge.listener.ActiveMQMsgServer;
@@ -14,8 +13,7 @@ import com.charge.protocol.message.RequestMsg;
 import com.charge.protocol.message.RequestSocketFacet;
 import com.charge.protocol.topic.GeneralTopic;
 import com.charge.protocol.update.UpdateMsgHandle;
-import com.charge.utils.DateUtil;
-import com.charge.utils.SEQGeneration;
+import com.charge.utils.*;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.charge.deviceManage.AlarmStatus.*;
 import static com.charge.protocol.ProtocolConstant.*;
 
 public class ChargePile implements GateWay {
@@ -71,25 +70,6 @@ public class ChargePile implements GateWay {
         return name;
     }
 
-    @Override
-    public void addCollector(Collector newCollector) {
-
-    }
-
-    @Override
-    public void delCollector(Long collectorId) {
-
-    }
-
-    @Override
-    public Collector getCollector(Long collectorId) {
-        return null;
-    }
-
-    @Override
-    public Set<Collector> getCollectors() {
-        return null;
-    }
 
     @Override
     public Device getDevice(Long deviceId) {
@@ -122,11 +102,23 @@ public class ChargePile implements GateWay {
     }
 
     private void updateData(JSONArray msgJArray){
-        //todo 具体功能待实现
 
         JSONObject gwFacetObj = msgJArray.getJSONObject(0);
-
         Date dataTime= DateUtil.yyyyMMddHHmmssStrToDate(gwFacetObj.getString(MSG_TIME));
+
+        List<Integer> gatewayStatusTagList = new ArrayList<>();
+        if (gwFacetObj.containsKey(MSG_GW_STATUS) ){
+            if(!gwFacetObj.getString(MSG_GW_STATUS).equals("")) {
+                JSONArray gatewayStatusTagJsonArray = gwFacetObj.getJSONArray(MSG_GW_STATUS);
+                for (int index=0; index<gatewayStatusTagJsonArray.size(); index++) {
+                    Integer gatewayStatusTag = Integer.parseInt(gatewayStatusTagJsonArray.getString(index));
+                    gatewayStatusTagList.add(gatewayStatusTag);
+                }
+            }
+        }
+        updateAllAlarm(gatewayStatusTagList, dataTime);//这里不在if中处理的原因：每次有新的数据都应该携带状态数据，如果没有携带，认为是状态改变
+
+
 
         for (int i=1; i<msgJArray.size(); i++){
             JSONObject chargeSocketObj = msgJArray.getJSONObject(i);
@@ -141,11 +133,58 @@ public class ChargePile implements GateWay {
             Device chargeSocket = chargeSocketMap.get(socketSn);
 
             chargeSocket.updateData(dataTime, chargeSocketObj);
+            chargeSocket.updateStatus(dataTime, chargeSocketObj);
 
         }
 
 
 
+    }
+
+    public void updateAllAlarm(List<Integer> alarmTagList, Date updateTime){
+        //删除所有end的消息
+        Iterator<Map.Entry<Integer, Alarm>> it = alarmMap.entrySet().iterator();
+        while (it.hasNext()){
+            Map.Entry<Integer, Alarm> entry = it.next();
+            if (entry.getValue().getStatus() == END) {
+                it.remove();
+            }
+        }
+
+        //在更新全部报警之前，将所有的报警设置为结束
+        for (Alarm alarm : alarmMap.values()){
+            alarm.setStatus(END);
+        }
+
+        //更新所有的报警
+        for (Integer alarmTag : alarmTagList){
+            updateAlarm(alarmTag, updateTime);
+        }
+
+    }
+    private void updateAlarm(Integer alarmTag, Date updateTime) {
+        if (alarmMap.containsKey(alarmTag)){
+            //已存在的报警就更新时间，状态改为 CONTINUE
+            Alarm alarm = alarmMap.get(alarmTag);
+            alarm.setEndTime(updateTime);
+            alarm.setStatus(CONTINUE);
+        }else {
+            //不存在的报警就新增，状态为 START
+            AlarmInfoConfig alarmConfig = AlarmConfigManager.getInstance().getAlarmConfig("CHARGE_PILE");
+
+            if (alarmConfig.containsTag(alarmTag.toString())){
+
+                AlarmInfo alarmInfo = alarmConfig.getAlarmInfo(alarmTag.toString());
+
+                String alarmMessage = alarmInfo.getAlarmMessage();
+                Alarm alarm = new Alarm(alarmTag, alarmMessage, updateTime, updateTime);
+
+                alarmMap.put(alarmTag, alarm);
+
+            }else {
+                _log.error("error, cannot find alarmInfo of " + alarmTag);
+            }
+        }
     }
 
 

@@ -5,18 +5,10 @@ import com.alibaba.fastjson.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static com.charge.protocol.ProtocolConstant.*;
 
 
-/**
- * Created by wukai on 17-7-10.
- * 消息解码
- */
 public class MsgConvertUtil {
 
     private static Logger _log = LoggerFactory.getLogger(MsgConvertUtil.class);
@@ -58,18 +50,6 @@ public class MsgConvertUtil {
 
         return jsonArray;
 
-    }
-
-
-    //获取无符号数
-    private static float getUnsignedByte(float source, String hex) {
-        if (hex.substring(0, 1).equals("S")) {
-            int h = Integer.parseInt(hex.substring(1, hex.length()));
-            if (source >= Math.pow(2, h) - 1) {
-                return (byte) source;
-            }
-        }
-        return source;
     }
 
 }

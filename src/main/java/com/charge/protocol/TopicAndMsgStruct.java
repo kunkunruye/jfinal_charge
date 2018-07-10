@@ -1,8 +1,5 @@
 package com.charge.protocol;
 
-/**
- * Created by zhengkun on 17-12-22.
- */
 public class TopicAndMsgStruct {
 
     private static final String TOPIC_MESSAGE_TERMINATOR                     = "$";//topic message分隔符

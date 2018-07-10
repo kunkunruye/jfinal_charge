@@ -1,9 +1,5 @@
 package com.charge.utils;
 
-
-/**
- * Created by wuzhe on 17-7-27.
- */
 public class AlarmInfo {
 
     private String tag;
