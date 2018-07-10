@@ -38,7 +38,6 @@ public class ProtocolConstant {
     public static final String MSG_STATIONNAME = "POS";         //电站名称
     public static final String MSG_SERIALNUMBER                             = "SEQ";         //信息序号／信息唯一标示号
     public static final String MSG_TIME                                     = "TIME";        //时间
-    public static final String MSG_DEVICETYPE                               = "DEVICETYPE";  //机型种类
     public static final String MSG_GWID                                     = "GWID";        //网关ID
     public static final String MSG_GW_STATUS                                = "STATUS";        //网关硬件状态
 
@@ -96,20 +95,6 @@ public class ProtocolConstant {
     public static final String MSG_UPDATE_CRC                              =   "CRC";      //校验,一个字节,对本次所发数据按字节异或操作所得到的结果
     public static final String MSG_UPDATE_STATUS                           =   "STATUS";   //升级状态,可选值为 0、1、3、4、5、10,0 代表该段数据校验有误;1 代表校验成功;3 代表子站网关处于电池供电,升级有可能会中断;4 代表内部 flash 损坏,不可升级;5代表已最新无需升级;10升级成功
 
-
-
-
-    public static final String MSG_CONG_LORA_F =   "LORA_F";  //信道
-    public static final String MSG_CONG_SF =   "SF";  //扩频因子
-    public static final String MSG_CONG_BF =   "BF";  //带宽
-    public static final String MSG_CONG_CR =   "CR";  //纠错编码
-    public static final String MSG_CONG_PV_IN =   "PV_IN";  //是否启用内部PV
-    public static final String MSG_CONG_DEVICE_NUM =   "DEVICENUM";  //设备的个数
-    public static final String MSG_CONG_MODBUSADDR =   "MODBUSADDR";  //modbusaddr
-    public static final String MSG_CONG_NAME =   "NAME";  //改变后的电站名
-    public static final String MSG_CONG_PROV =   "PROV";  //改变后的省名称
-    public static final String MSG_CONG_CITY =   "CITY";  //改变后的市名称
-    public static final String MSG_CONG_CRY =   "CRY";  //内部参数
 
 }
 
