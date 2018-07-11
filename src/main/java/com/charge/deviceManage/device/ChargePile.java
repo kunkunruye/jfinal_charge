@@ -54,16 +54,6 @@ public class ChargePile implements GateWay {
     }
 
     @Override
-    public boolean updateData(Date updateTime, JSONObject deviceObj) {
-        return false;
-    }
-
-    @Override
-    public boolean updateStatus(Date updateTime, JSONObject deviceObj) {
-        return false;
-    }
-
-    @Override
     public void setName(String name) {
         this.name = name;
 
@@ -81,7 +71,7 @@ public class ChargePile implements GateWay {
     }
 
     @Override
-    public Set<Device> getDevices() {
+    public Vector<Device> getDevices() {
         return null;
     }
 
