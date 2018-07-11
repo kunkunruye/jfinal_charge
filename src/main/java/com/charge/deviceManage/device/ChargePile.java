@@ -1,9 +1,10 @@
-package com.charge.deviceManage;
+package com.charge.deviceManage.device;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.charge.deviceInterface.Device;
 import com.charge.deviceInterface.GateWay;
+import com.charge.deviceManage.alarm.Alarm;
 import com.charge.listener.ActiveMQMsgServer;
 import com.charge.protocol.MqttMsgSender;
 import com.charge.protocol.MsgConvertUtil;
@@ -21,12 +22,14 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.charge.deviceManage.AlarmStatus.*;
+import static com.charge.deviceManage.alarm.AlarmStatus.*;
 import static com.charge.protocol.ProtocolConstant.*;
 
 public class ChargePile implements GateWay {
     private Long chargePileId;//充电桩Id
     private String name;//充电桩名称
+
+    private boolean isOnline;
 
     private Map<Integer, Alarm> alarmMap = new HashMap<>();//Tag， alarm   保存的状态数据
 
@@ -37,6 +40,7 @@ public class ChargePile implements GateWay {
 
     public ChargePile(Long chargePileId){
         this.chargePileId = chargePileId;
+        isOnline = false;//仅仅是初始化，未上线
     }
 
     @Override

@@ -1,8 +1,8 @@
-package com.charge.deviceManage;
+package com.charge.deviceManage.alarm;
 
 import java.util.Date;
 
-import static com.charge.deviceManage.AlarmStatus.START;
+import static com.charge.deviceManage.alarm.AlarmStatus.START;
 
 
 /**

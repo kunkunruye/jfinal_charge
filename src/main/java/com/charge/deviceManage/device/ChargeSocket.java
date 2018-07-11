@@ -1,8 +1,9 @@
-package com.charge.deviceManage;
+package com.charge.deviceManage.device;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.charge.deviceInterface.Device;
+import com.charge.deviceManage.alarm.Alarm;
 import com.charge.utils.AlarmConfigManager;
 import com.charge.utils.AlarmInfo;
 import com.charge.utils.AlarmInfoConfig;
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-import static com.charge.deviceManage.AlarmStatus.*;
+import static com.charge.deviceManage.alarm.AlarmStatus.*;
 import static com.charge.protocol.ProtocolConstant.*;
 
 public class ChargeSocket implements Device {

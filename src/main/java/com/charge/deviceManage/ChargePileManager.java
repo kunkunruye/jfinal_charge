@@ -1,5 +1,7 @@
 package com.charge.deviceManage;
 
+import com.charge.deviceManage.device.ChargePile;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +24,14 @@ public class ChargePileManager {
         }
 
         return null;
+    }
+
+    public boolean hasChargePile(Long chargePileId){
+        return chargePileMap.containsKey(chargePileId);
+    }
+
+    public void addChargePile(Long chargePileId){
+        chargePileMap.put(chargePileId, new ChargePile(chargePileId));
     }
 
 

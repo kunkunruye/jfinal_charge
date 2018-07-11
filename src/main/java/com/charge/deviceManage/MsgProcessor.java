@@ -1,9 +1,8 @@
 package com.charge.deviceManage;
 
+import com.charge.deviceManage.device.ChargePile;
 import com.charge.protocol.TopicAndMsgStruct;
 import com.charge.protocol.topic.GeneralTopic;
-
-import java.util.Vector;
 
 import static com.charge.protocol.ProtocolConstant.*;
 
@@ -30,9 +29,9 @@ public class MsgProcessor {
 
         if (TOPIC_NOTIFY.equals(messageType)){
 
-            UnregisteredChargePileManager instance = UnregisteredChargePileManager.getInstance();
-            if (!instance.hasUnregisteredChargePile(gwId)){
-                instance.addUnregisteredChargePile(gwId);
+            //待注册设备
+            if (!ChargePileManager.getInstance().hasChargePile(gwId)){
+                ChargePileManager.getInstance().addChargePile(gwId);
             }
 
         }else {
@@ -58,53 +57,7 @@ public class MsgProcessor {
                 default:
                     break;
             }
-
         }
-
-
-
     }
-
-    //请求允许上线
-    public void permissionOnLine(Long gwId, String callBackQueueName){
-        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
-
-        chargePile.permissionOnLine(callBackQueueName);
-
-    }
-
-    //请求关闭所有插座
-    public void shutDownAllSockets(Long gwId, String callBackQueueName){
-        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
-
-        chargePile.shutDownAllSockets(callBackQueueName);
-
-    }
-
-    //请求关闭插座
-    public void shutDownChargeSocket(Long gwId, Vector<Long> socketIds, String callBackQueueName){
-        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
-
-        chargePile.shutDownChargeSocket(socketIds, callBackQueueName);
-
-    }
-
-    //请求测试充电功率
-    public void requestTestPower(Long gwId, Vector<Long> socketIds, String callBackQueueName){
-        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
-
-        chargePile.requestTestPower(socketIds, callBackQueueName);
-    }
-
-    //请求插座开始充电
-    public void startCharge(Long gwId, Vector<Long> socketIds, String callBackQueueName){
-        ChargePile chargePile = ChargePileManager.getInstance().getChargePile(gwId);
-
-        chargePile.startCharge(socketIds, callBackQueueName);
-
-    }
-
-
-
 
 }
