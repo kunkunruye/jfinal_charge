@@ -85,6 +85,8 @@ public class ProtocolConstant {
     public static final String MSG_RESPONCE_CODE_TESTSOCKETPOWER         =   "4";        //4:响应测试充电功率
     public static final String MSG_RESPONCE_CODE_SOCKETSTARTCHARGE         =   "5";        //5:响应插座开始充电
 
+    public static final String MSG_RESPONCE_RESULT = "RESULT";
+
 
 
     //2017.11.14况发志新增

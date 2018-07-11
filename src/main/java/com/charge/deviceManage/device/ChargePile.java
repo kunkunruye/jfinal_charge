@@ -81,11 +81,9 @@ public class ChargePile implements GateWay {
             return;
         }
 
-        String messageOut = message.replaceAll(MSG_FACET_SEPARATOR_INSIDE, MSG_FACET_SEPARATOR);
-        String messageIn = messageOut.replaceAll(MSG_FACET_SEPARATOR, MSG_FACET_SEPARATOR_INSIDE);
-
         long startTime=System.currentTimeMillis();//记录开始时间
 
+        String messageIn = getPreMsgStr(message);
         JSONArray messageJsonArr = MsgConvertUtil.msg2Json(messageIn);
         updateDataAndAlarm(messageJsonArr);
 
@@ -176,16 +174,82 @@ public class ChargePile implements GateWay {
     }
 
 
-
     public void imageMsgHandle(String message){
+        if (null == message || message.isEmpty()) {
+            _log.error("the message is empty!");
+            return;
+        }
+
+        //不需要转换
+
 
     }
     public void requestMsgHandle(String message){
-
+        if (null == message || message.isEmpty()) {
+            _log.error("the message is empty!");
+            return;
+        }
     }
 
     public void responseMsgHandle(String message){
+        if (null == message || message.isEmpty()) {
+            _log.error("the message is empty!");
+            return;
+        }
 
+        long startTime=System.currentTimeMillis();//记录开始时间
+
+        String messageIn = getPreMsgStr(message);
+        JSONArray messageJsonArr = MsgConvertUtil.msg2Json(messageIn);
+
+        JSONObject gwFacetObj = messageJsonArr.getJSONObject(0);
+
+        String gwIdStr = gwFacetObj.getString(MSG_GWID);
+        if (!chargePileId.equals(Long.parseLong(gwIdStr))){
+            _log.error("gwid in message: " + gwIdStr + " is not equal to gwid in topic: " +  chargePileId.toString());
+            return;
+        }
+
+        Integer responseSequenceNum = Integer.parseInt(gwFacetObj.getString(MSG_SERIALNUMBER));
+
+        if (!requestSNAndCallBackQueueNameMap.containsKey(responseSequenceNum)){
+            _log.error("response SequenceNum dose not exist in requestSNAndCallBackQueueNameMap:" + responseSequenceNum.toString());
+            return;
+        }
+
+        JSONObject responseObj = messageJsonArr.getJSONObject(1);
+        if (!responseObj.containsKey(MSG_RESPONSE)){
+            _log.error("invalid response message : " + responseObj.toString());
+            return;
+        }
+
+        String responseType = responseObj.getString(MSG_RESPONSE);
+
+        switch (responseType){
+            case MSG_RESPONCE_CODE_PERMISSIONONLINE:
+                if (responseObj.getString(MSG_RESPONCE_RESULT).equals("1")){
+                    isOnline = true;
+                }
+                break;
+            case MSG_RESPONCE_CODE_SHUTDOWNALLSOCKETS:
+                break;
+            case MSG_RESPONCE_CODE_SHUTDOWNSOCKET:
+                break;
+            case MSG_RESPONCE_CODE_TESTSOCKETPOWER:
+                break;
+            case MSG_RESPONCE_CODE_SOCKETSTARTCHARGE:
+                break;
+            default:
+                break;
+
+        }
+
+
+    }
+
+    private String getPreMsgStr(String message) {
+        String messageOut = message.replaceAll(MSG_FACET_SEPARATOR_INSIDE, MSG_FACET_SEPARATOR);
+        return messageOut.replaceAll(MSG_FACET_SEPARATOR, MSG_FACET_SEPARATOR_INSIDE);
     }
 
     public void updateMsgHandle(String message){
