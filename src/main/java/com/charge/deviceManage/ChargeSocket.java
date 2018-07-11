@@ -170,4 +170,28 @@ public class ChargeSocket implements Device {
             }
         }
     }
+
+    public boolean isUsed() {
+        return used;
+    }
+
+    public Long getStartPower() {
+        return startPower;
+    }
+
+    public Long getChargeIntensity() {
+        return chargeIntensity;
+    }
+
+    public Long getChargeTime() {
+        return chargeTime;
+    }
+
+    public Integer getChargeState() {
+        return chargeState;
+    }
+
+    public Date getLastUpdateTime() {
+        return lastUpdateTime;
+    }
 }
