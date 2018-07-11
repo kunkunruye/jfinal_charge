@@ -83,6 +83,7 @@ public class ChargePile implements GateWay {
 
     public void dataMsgHandle(String message) {
         if (null == message || message.isEmpty()) {
+            _log.error("the message is empty!");
             return;
         }
 
@@ -92,33 +93,19 @@ public class ChargePile implements GateWay {
         long startTime=System.currentTimeMillis();//记录开始时间
 
         JSONArray messageJsonArr = MsgConvertUtil.msg2Json(messageIn);
+        updateDataAndAlarm(messageJsonArr);
 
         long endTime=System.currentTimeMillis();//记录结束时间
         float excTime=(float)(endTime-startTime)/1000;
         _log.info("PVStation dataMsgHandle convertDataValue2StandardUnit 执行时间："+excTime+"s");
-
-        updateData(messageJsonArr);
-
     }
 
-    private void updateData(JSONArray msgJArray){
+    private void updateDataAndAlarm(JSONArray msgJArray){
 
         JSONObject gwFacetObj = msgJArray.getJSONObject(0);
         Date dataTime= DateUtil.yyyyMMddHHmmssStrToDate(gwFacetObj.getString(MSG_TIME));
 
-        List<Integer> gatewayStatusTagList = new ArrayList<>();
-        if (gwFacetObj.containsKey(MSG_GW_STATUS) ){
-            if(!gwFacetObj.getString(MSG_GW_STATUS).equals("")) {
-                JSONArray gatewayStatusTagJsonArray = gwFacetObj.getJSONArray(MSG_GW_STATUS);
-                for (int index=0; index<gatewayStatusTagJsonArray.size(); index++) {
-                    Integer gatewayStatusTag = Integer.parseInt(gatewayStatusTagJsonArray.getString(index));
-                    gatewayStatusTagList.add(gatewayStatusTag);
-                }
-            }
-        }
-        updateAllAlarm(gatewayStatusTagList, dataTime);//这里不在if中处理的原因：每次有新的数据都应该携带状态数据，如果没有携带，认为是状态改变
-
-
+        updateAlarm(gwFacetObj, dataTime);
 
         for (int i=1; i<msgJArray.size(); i++){
             JSONObject chargeSocketObj = msgJArray.getJSONObject(i);
@@ -136,13 +123,24 @@ public class ChargePile implements GateWay {
             chargeSocket.updateStatus(dataTime, chargeSocketObj);
 
         }
+    }
 
-
-
+    private void updateAlarm(JSONObject gwFacetObj, Date dataTime) {
+        List<Integer> gatewayStatusTagList = new ArrayList<>();
+        if (gwFacetObj.containsKey(MSG_GW_STATUS) ){
+            if(!gwFacetObj.getString(MSG_GW_STATUS).equals("")) {
+                JSONArray gatewayStatusTagJsonArray = gwFacetObj.getJSONArray(MSG_GW_STATUS);
+                for (int index=0; index<gatewayStatusTagJsonArray.size(); index++) {
+                    Integer gatewayStatusTag = Integer.parseInt(gatewayStatusTagJsonArray.getString(index));
+                    gatewayStatusTagList.add(gatewayStatusTag);
+                }
+            }
+        }
+        updateAllAlarm(gatewayStatusTagList, dataTime);//这里不在if中处理的原因：每次有新的数据都应该携带状态数据，如果没有携带，认为是状态改变
     }
 
     public void updateAllAlarm(List<Integer> alarmTagList, Date updateTime){
-        //删除所有end的消息
+        //删除所有end的消息,删除一定要用迭代器
         Iterator<Map.Entry<Integer, Alarm>> it = alarmMap.entrySet().iterator();
         while (it.hasNext()){
             Map.Entry<Integer, Alarm> entry = it.next();
@@ -158,11 +156,11 @@ public class ChargePile implements GateWay {
 
         //更新所有的报警
         for (Integer alarmTag : alarmTagList){
-            updateAlarm(alarmTag, updateTime);
+            updateSingleAlarm(alarmTag, updateTime);
         }
 
     }
-    private void updateAlarm(Integer alarmTag, Date updateTime) {
+    private void updateSingleAlarm(Integer alarmTag, Date updateTime) {
         if (alarmMap.containsKey(alarmTag)){
             //已存在的报警就更新时间，状态改为 CONTINUE
             Alarm alarm = alarmMap.get(alarmTag);
@@ -173,14 +171,10 @@ public class ChargePile implements GateWay {
             AlarmInfoConfig alarmConfig = AlarmConfigManager.getInstance().getAlarmConfig("CHARGE_PILE");
 
             if (alarmConfig.containsTag(alarmTag.toString())){
-
                 AlarmInfo alarmInfo = alarmConfig.getAlarmInfo(alarmTag.toString());
-
                 String alarmMessage = alarmInfo.getAlarmMessage();
                 Alarm alarm = new Alarm(alarmTag, alarmMessage, updateTime, updateTime);
-
                 alarmMap.put(alarmTag, alarm);
-
             }else {
                 _log.error("error, cannot find alarmInfo of " + alarmTag);
             }
