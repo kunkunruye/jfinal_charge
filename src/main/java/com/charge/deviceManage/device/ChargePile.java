@@ -223,6 +223,8 @@ public class ChargePile implements GateWay {
             return;
         }
 
+        String callBackQueueName = requestSNAndCallBackQueueNameMap.get(responseSequenceNum);
+
         String responseType = responseObj.getString(MSG_RESPONSE);
 
         switch (responseType){
@@ -230,14 +232,16 @@ public class ChargePile implements GateWay {
                 if (responseObj.getString(MSG_RESPONCE_RESULT).equals("1")){
                     isOnline = true;
                 }
+                DataSourceUtils.getInstance().pushToActiveMQ(messageJsonArr.toString(), callBackQueueName);
                 break;
             case MSG_RESPONCE_CODE_SHUTDOWNALLSOCKETS:
-                break;
+
             case MSG_RESPONCE_CODE_SHUTDOWNSOCKET:
-                break;
+
             case MSG_RESPONCE_CODE_TESTSOCKETPOWER:
-                break;
+
             case MSG_RESPONCE_CODE_SOCKETSTARTCHARGE:
+                DataSourceUtils.getInstance().pushToActiveMQ(messageJsonArr.toString(), callBackQueueName);
                 break;
             default:
                 break;
