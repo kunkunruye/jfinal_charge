@@ -261,10 +261,9 @@ public class ChargePile implements GateWay {
         }
 
         //todo 这里需要重写
-        //String location = getProvince()+"/"+getCity();
-        String location = "";
+        String industryAndVersion = "CHARGE"+"/"+"1";
         ActiveMQMsgServer server = ActiveMQMsgServer.getInstance();
-        UpdateMsgHandle.handle(server,location,messageJson);
+        UpdateMsgHandle.handle(server,industryAndVersion,messageJson);
     }
 
     //通过mqtt向硬件推送数据

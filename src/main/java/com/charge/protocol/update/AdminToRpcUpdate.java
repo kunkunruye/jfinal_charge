@@ -142,10 +142,10 @@ public class AdminToRpcUpdate {
                 reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                 String temp;
-                String location = null;
+                String industryAndVersion = null;
                 //获取业务唯一识别码的逻辑
                 if ((temp = reader.readLine()) != null) {
-                    location = temp;
+                    industryAndVersion = temp;
                 }
                 String message = null;
                 //获取反馈的信息的逻辑
@@ -164,12 +164,12 @@ public class AdminToRpcUpdate {
                 int status = ump.getStatus();
 
                 //socketMap管理socket的唯一key
-                String key = location+"/"+gwid;
+                String key = industryAndVersion+"/"+gwid;
 
                 //获取主题
                 String topic = topicMap.get(key);
 
-                byte[] keyBytes = (location ).getBytes();
+                byte[] keyBytes = (industryAndVersion + "/" + gwid.toString()).getBytes();
                 byte[] buff = RedisUtil.get(keyBytes);
                 byte[] bytes = null;
                 if(!(buff.length == offset)){
