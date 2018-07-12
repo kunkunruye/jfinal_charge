@@ -11,7 +11,6 @@ import static com.charge.protocol.ProtocolConstant.*;
 
 
 public class UpdateMsgProcesser   {
-    private String powerStationName;
     private String sequenceNum;
     private String timeStr;
     private BigInteger gwid;
@@ -24,8 +23,7 @@ public class UpdateMsgProcesser   {
 
     public UpdateMsgProcesser(){}
 
-    public UpdateMsgProcesser(String powerStationName, String sequenceNum, String timeStr, BigInteger gwid, String update, int offset, int len, int lenAll, int crc) {
-        this.powerStationName = powerStationName;
+    public UpdateMsgProcesser(String sequenceNum, String timeStr, BigInteger gwid, String update, int offset, int len, int lenAll, int crc) {
         this.sequenceNum = sequenceNum;
         this.timeStr = timeStr;
         this.gwid = gwid;
@@ -38,10 +36,10 @@ public class UpdateMsgProcesser   {
 
     public byte[] updateEncode(){
         StringBuilder sb=new StringBuilder();
-        sb.append(MSG_STATIONNAME).append(MSG_COMPONENT_SEPARATOR).append(powerStationName).append(MSG_SEGMENT_SEPARATOR)
+        sb.append(MSG_GWID).append(MSG_COMPONENT_SEPARATOR).append(String.format("%012d",gwid)).append(MSG_SEGMENT_SEPARATOR)
                 .append(MSG_SERIALNUMBER).append(MSG_COMPONENT_SEPARATOR).append(sequenceNum).append(MSG_SEGMENT_SEPARATOR)
                 .append(MSG_TIME).append(MSG_COMPONENT_SEPARATOR).append(timeStr).append(MSG_SEGMENT_SEPARATOR)
-                .append(MSG_GWID).append(MSG_COMPONENT_SEPARATOR).append(String.format("%012d",gwid)).append(MSG_FACET_SEPARATOR_INSIDE)
+                .append(MSG_FACET_SEPARATOR_INSIDE)
                 .append(MSG_UPDATE_UPDATE).append(MSG_COMPONENT_SEPARATOR).append(update).append(MSG_SEGMENT_SEPARATOR)
                 .append(MSG_UPDATE_OFFSET).append(MSG_COMPONENT_SEPARATOR).append(offset).append(MSG_SEGMENT_SEPARATOR)
                 .append(MSG_UPDATE_LEN).append(MSG_COMPONENT_SEPARATOR).append(len).append(MSG_SEGMENT_SEPARATOR)
@@ -60,7 +58,6 @@ public class UpdateMsgProcesser   {
     public void updateDecode(String updateMsgStr) {
         JSONArray myJsonArray = JSONArray.parseArray(updateMsgStr);
         Map mapFirst = myJsonArray.getJSONObject(0);
-        this.powerStationName = (String) mapFirst.get(MSG_STATIONNAME);
         this.sequenceNum = (String) mapFirst.get(MSG_SERIALNUMBER);
         this.timeStr = (String) mapFirst.get(MSG_TIME);
         this.gwid = new BigInteger((String)mapFirst.get(MSG_GWID));
@@ -72,10 +69,6 @@ public class UpdateMsgProcesser   {
             return;
         }
         this.status = Integer.parseInt((String) statusArr.get(0));
-    }
-
-    public String getPowerStationName() {
-        return powerStationName;
     }
 
     public String getSequenceNum() {
@@ -103,8 +96,7 @@ public class UpdateMsgProcesser   {
     @Override
     public String toString() {
         return "UpdateMsgProcesser{" +
-                "powerStationName='" + powerStationName + '\'' +
-                ", sequenceNum='" + sequenceNum + '\'' +
+                "sequenceNum='" + sequenceNum + '\'' +
                 ", timeStr='" + timeStr + '\'' +
                 ", gwid=" + gwid +
                 ", update='" + update + '\'' +

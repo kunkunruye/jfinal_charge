@@ -68,13 +68,12 @@ public class AdminToRpcUpdate {
                 }
 
                 String[] keyStr = adminMsg.split("/");
-                String province = keyStr[0];
-                String city = keyStr[1];
-                String powerstationName = keyStr[2];
-                BigInteger gwid = new BigInteger(keyStr[3]);
-                String version = keyStr[4];
+                String industry = keyStr[0];
+                String protocolVersion = keyStr[1];
+                BigInteger gwid = new BigInteger(keyStr[2]);
+                String hardwareVersion = keyStr[3];
 
-                String key = province+"/"+city + "/" + powerstationName + "/" + gwid;
+                String key = industry+"/"+protocolVersion + "/" + gwid;
 
                 //生成时间
                 String timeStr = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -82,12 +81,12 @@ public class AdminToRpcUpdate {
 
                 //生成主题
                 GeneralTopic generalTopic = new GeneralTopic();
-                String topic = generalTopic.generateTopic(province, city, powerstationName , TOPIC_UPDATE);
-                byte[] buff = RedisUtil.get((province + "/" + city + "/" + powerstationName).getBytes());
+                String topic = generalTopic.generateTopic(industry, protocolVersion, gwid.toString() , TOPIC_UPDATE);
+                byte[] buff = RedisUtil.get((industry + "/" + protocolVersion + "/" + gwid.toString()).getBytes());
 
                 //UpdateDevice ud = new UpdateDevice(buff);
                 //ud.analysisFile(0);
-                UpdateMsgProcesser ump = new UpdateMsgProcesser(powerstationName, seq, timeStr, gwid, version, 0, 0, buff.length, 0);
+                UpdateMsgProcesser ump = new UpdateMsgProcesser(seq, timeStr, gwid, hardwareVersion, 0, 0, buff.length, 0);
                 byte[] bytes = ump.updateEncode();
                 //byte[] bytes2 = ud.getBytes();
                 //byte[] bytes = new byte[bytes1.length + bytes2.length];
@@ -157,7 +156,6 @@ public class AdminToRpcUpdate {
                 //update消息解析类获取message的各个属性
                 UpdateMsgProcesser ump = new UpdateMsgProcesser();
                 ump.updateDecode(message);
-                String powerstationName = ump.getPowerStationName();
                 String seq = ump.getSequenceNum();
                 String timeStr = ump.getTimeStr();
                 BigInteger gwid = ump.getGwid();
@@ -166,19 +164,19 @@ public class AdminToRpcUpdate {
                 int status = ump.getStatus();
 
                 //socketMap管理socket的唯一key
-                String key = location+"/"+powerstationName+"/"+gwid;
+                String key = location+"/"+gwid;
 
                 //获取主题
                 String topic = topicMap.get(key);
 
-                byte[] keyBytes = (location + "/" + powerstationName).getBytes();
+                byte[] keyBytes = (location ).getBytes();
                 byte[] buff = RedisUtil.get(keyBytes);
                 byte[] bytes = null;
                 if(!(buff.length == offset)){
                     UpdateDevice ud = new UpdateDevice(buff);
                     ud.analysisFile(offset);
 
-                    UpdateMsgProcesser updateMsgProcesser = new UpdateMsgProcesser(powerstationName, seq, timeStr, gwid, version, offset, ud.getLength(), ud.getLengthAll(), ud.getCrc());
+                    UpdateMsgProcesser updateMsgProcesser = new UpdateMsgProcesser(seq, timeStr, gwid, version, offset, ud.getLength(), ud.getLengthAll(), ud.getCrc());
                     byte[] bytes1 = updateMsgProcesser.updateEncode();
                     byte[] bytes2 = ud.getBytes();
 
@@ -251,7 +249,6 @@ public class AdminToRpcUpdate {
     }
 
     private void send(String topic, byte[] bytes) {
-        MqttMsgSender mqttMsgSender = null;
         try {
             MqttMsgSender.getInstance().Send(topic, bytes, 1);
         } catch (Exception e) {
